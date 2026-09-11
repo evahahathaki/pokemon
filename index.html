@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Should I Evolve This Pokémon?</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
     
@@ -14,8 +14,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), 
-                  url('https://assets.pokemon.com/static2/_ui/img/chrome/container_bg.png');
+      /* Legendary Pokemon Background Overlay with Intense Red Glow */
+      background: linear-gradient(135deg, rgba(139, 0, 0, 0.88), rgba(20, 0, 5, 0.92)), 
+                  url('https://images.alphacoders.com/605/thumb-1920-605282.jpg');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -24,63 +25,66 @@
     }
 
     .card {
-      background: rgba(30, 41, 59, 0.75);
+      background: rgba(25, 5, 10, 0.85);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 24px;
-      padding: 35px 25px;
-      max-width: 550px;
+      border: 2px solid #ff2a2a;
+      border-radius: 28px;
+      padding: 40px 30px;
+      max-width: 580px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 35px rgba(255, 0, 0, 0.6), inset 0 0 15px rgba(255, 0, 0, 0.3);
     }
 
     h1 {
-      font-size: 26px;
-      font-weight: 800;
-      margin-bottom: 8px;
-      background: linear-gradient(135deg, #ffcb05, #ff5050);
+      font-size: 30px;
+      font-weight: 900;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #ff4d4d, #ffcc00);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
     }
 
-    p.subtitle { font-size: 14px; color: #94a3b8; margin-bottom: 25px; }
+    p.subtitle { font-size: 14px; color: #ff9999; margin-bottom: 25px; font-weight: 600; }
 
     select {
       width: 100%;
-      padding: 14px 18px;
+      padding: 16px 20px;
       font-size: 16px;
-      font-weight: 600;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background: #0f172a;
-      color: #f8fafc;
+      font-weight: 700;
+      border-radius: 14px;
+      border: 2px solid #ff3333;
+      background: #1a0306;
+      color: #fff;
       outline: none;
       cursor: pointer;
       transition: all 0.3s ease;
       margin-bottom: 25px;
+      box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
     }
 
     select:hover, select:focus {
-      border-color: #ffcb05;
-      box-shadow: 0 0 12px rgba(255, 203, 5, 0.3);
+      border-color: #ffcc00;
+      box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
     }
 
     .result-badge {
       font-size: 22px;
-      font-weight: 800;
-      padding: 10px 20px;
+      font-weight: 900;
+      padding: 12px 24px;
       border-radius: 50px;
       display: inline-block;
       margin-bottom: 25px;
+      letter-spacing: 1px;
       animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .yes { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
-    .no { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+    .yes { background: rgba(34, 197, 94, 0.25); color: #4ade80; border: 2px solid #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
+    .no { background: rgba(239, 68, 68, 0.25); color: #ff6b6b; border: 2px solid #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
 
     .flex-container {
       display: flex;
@@ -91,56 +95,59 @@
     }
 
     .poke-box {
-      background: rgba(15, 23, 42, 0.6);
-      border-radius: 16px;
-      padding: 15px;
+      background: rgba(40, 8, 12, 0.8);
+      border-radius: 20px;
+      padding: 18px;
       width: 45%;
-      min-width: 180px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      min-width: 190px;
+      border: 1px solid rgba(255, 80, 80, 0.3);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
       animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .poke-box.single { width: 80%; margin: 0 auto; }
 
     .poke-box img {
-      width: 120px;
-      height: 120px;
-      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+      width: 130px;
+      height: 130px;
+      filter: drop-shadow(0 12px 18px rgba(255, 0, 0, 0.3));
       transition: transform 0.3s ease;
     }
 
-    .poke-box img:hover { transform: scale(1.15) rotate(3deg); }
+    .poke-box img:hover { transform: scale(1.18) rotate(4deg); }
 
     .poke-name {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 19px;
+      font-weight: 800;
       text-transform: capitalize;
       margin: 8px 0;
-      color: #ffcb05;
+      color: #ffcc00;
+      text-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
     }
 
     .arrow {
-      font-size: 28px;
-      color: #ffcb05;
+      font-size: 32px;
+      color: #ffcc00;
+      text-shadow: 0 0 15px rgba(255, 204, 0, 0.8);
       animation: pulse 1.5s infinite;
     }
 
     /* Stat Bars */
-    .stat-group { text-align: left; margin-top: 10px; font-size: 12px; }
-    .stat-label { display: flex; justify-content: space-between; margin-bottom: 3px; color: #cbd5e1; font-weight: 600; }
-    .bar-bg { background: #334155; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
-    .bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease-out; }
-    .hp-fill { background: #22c55e; }
-    .atk-fill { background: #ef4444; }
+    .stat-group { text-align: left; margin-top: 12px; font-size: 12px; }
+    .stat-label { display: flex; justify-content: space-between; margin-bottom: 4px; color: #ffcccc; font-weight: 700; }
+    .bar-bg { background: #2a0a0f; height: 10px; border-radius: 6px; overflow: hidden; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
+    .bar-fill { height: 100%; border-radius: 6px; transition: width 1s ease-out; }
+    .hp-fill { background: linear-gradient(90deg, #16a34a, #4ade80); }
+    .atk-fill { background: linear-gradient(90deg, #dc2626, #ff4d4d); }
 
     @keyframes popIn {
-      0% { opacity: 0; transform: scale(0.7); }
+      0% { opacity: 0; transform: scale(0.6); }
       100% { opacity: 1; transform: scale(1); }
     }
 
     @keyframes pulse {
       0%, 100% { transform: scale(1); opacity: 0.8; }
-      50% { transform: scale(1.3); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 1; }
     }
   </style>
 </head>
@@ -164,7 +171,6 @@
       download: true,
       header: true,
       complete: function(results) {
-        // Filter out empty rows
         pokemonData = results.data.filter(p => p.pokemon && p.pokemon.trim() !== '');
         populateDropdown();
       }
@@ -172,7 +178,7 @@
 
     function populateDropdown() {
       const select = document.getElementById('pokemonSelect');
-      select.innerHTML = '<option value="">-- Choose a Pokémon (A-Z) --</option>';
+      select.innerHTML = '<option value="">-- Select a Pokémon (A-Z) --</option>';
 
       // Sort Alphabetically
       const sorted = [...pokemonData].sort((a, b) => a.pokemon.localeCompare(b.pokemon));
@@ -205,7 +211,7 @@
       } else {
         output.innerHTML = `
           <div class="result-badge no">NO EVOLUTION AVAILABLE 🚫</div>
-          <p style="margin-bottom: 15px; color: #94a3b8; font-size: 13px;">This Pokémon is in its final stage or does not evolve.</p>
+          <p style="margin-bottom: 15px; color: #ff9999; font-size: 13px;">This Pokémon has reached its final stage or does not evolve.</p>
           <div class="flex-container">
             ${createPokeCard(selected, true)}
           </div>
