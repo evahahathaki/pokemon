@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Should I Evolve This Pokémon?</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f9; padding: 20px; }
+    .card { background: white; padding: 20px; border-radius: 12px; max-width: 500px; margin: 20px auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    select { padding: 10px; font-size: 16px; width: 80%; margin-bottom: 20px; }
+    .result { font-size: 24px; font-weight: bold; margin: 15px 0; }
+    .yes { color: #2e7d32; }
+    .no { color: #c62828; }
+    img { width: 120px; height: 120px; }
+    .flex { display: flex; justify-content: space-around; align-items: center; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Should I Evolve This Pokémon?</h1>
+    <p>Select a Pokémon from the list:</p>
+    <select id="pokemonSelect"><option>Loading Pokémon data...</option></select>
+    
+    <div id="output"></div>
+  </div>
+
+  <script>
+    let pokemonData = [];
+
+    Papa.parse('pokemon.csv', {
+      download: true,
+      header: true,
+      complete: function(results) {
+        pokemonData = results.data;
+        populateDropdown();
+      }
+    });
+
+    function populateDropdown() {
+      const select = document.getElementById('pokemonSelect');
+      select.innerHTML = '<option value="">-- Choose a Pokémon --</option>';
+      pokemonData.forEach(p => {
+        if (p.pokemon) {
+          const option = document.createElement('option');
+          option.value = p.species_id;
+          option.textContent = p.pokemon.charAt(0).toUpperCase() + p.pokemon.slice(1);
+          select.appendChild(option);
+        }
+      });
+    }
+
+    document.getElementById('pokemonSelect').addEventListener('change', function() {
+      const speciesId = this.value;
+      const output = document.getElementById('output');
+      if (!speciesId) { output.innerHTML = ''; return; }
+
+      const selected = pokemonData.find(p => p.species_id === speciesId);
+      const evolution = pokemonData.find(p => p.evolves_from_species_id === speciesId);
+
+      if (evolution) {
+        output.innerHTML = `
+          <div class="result yes">YES! You should evolve it.</div>
+          <div class="flex">
+            <div>
+              <p><strong>${selected.pokemon.toUpperCase()}</strong></p>
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selected.species_id}.png" alt="${selected.pokemon}">
+              <p>HP: ${selected.hp} | Atk: ${selected.attack}</p>
+            </div>
+            <div>➔</div>
+            <div>
+              <p><strong>${evolution.pokemon.toUpperCase()}</strong></p>
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${evolution.species_id}.png" alt="${evolution.pokemon}">
+              <p>HP: ${evolution.hp} | Atk: ${evolution.attack}</p>
+            </div>
+          </div>
+        `;
+      } else {
+        output.innerHTML = `
+          <div class="result no">NO</div>
+          <p>This Pokémon cannot evolve further or has no evolution in this dataset.</p>
+          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selected.species_id}.png" alt="${selected.pokemon}">
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
