@@ -5,24 +5,155 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Should I Evolve This Pokémon?</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f9; padding: 20px; }
-    .card { background: white; padding: 20px; border-radius: 12px; max-width: 500px; margin: 20px auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-    select { padding: 10px; font-size: 16px; width: 80%; margin-bottom: 20px; }
-    .result { font-size: 24px; font-weight: bold; margin: 15px 0; }
-    .yes { color: #2e7d32; }
-    .no { color: #c62828; }
-    img { width: 120px; height: 120px; }
-    .flex { display: flex; justify-content: space-around; align-items: center; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), 
+                  url('https://assets.pokemon.com/static2/_ui/img/chrome/container_bg.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 35px 25px;
+      max-width: 550px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffcb05, #ff5050);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    p.subtitle { font-size: 14px; color: #94a3b8; margin-bottom: 25px; }
+
+    select {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #0f172a;
+      color: #f8fafc;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 25px;
+    }
+
+    select:hover, select:focus {
+      border-color: #ffcb05;
+      box-shadow: 0 0 12px rgba(255, 203, 5, 0.3);
+    }
+
+    .result-badge {
+      font-size: 22px;
+      font-weight: 800;
+      padding: 10px 20px;
+      border-radius: 50px;
+      display: inline-block;
+      margin-bottom: 25px;
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .yes { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
+    .no { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+
+    .flex-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .poke-box {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 16px;
+      padding: 15px;
+      width: 45%;
+      min-width: 180px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .poke-box.single { width: 80%; margin: 0 auto; }
+
+    .poke-box img {
+      width: 120px;
+      height: 120px;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+      transition: transform 0.3s ease;
+    }
+
+    .poke-box img:hover { transform: scale(1.15) rotate(3deg); }
+
+    .poke-name {
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: capitalize;
+      margin: 8px 0;
+      color: #ffcb05;
+    }
+
+    .arrow {
+      font-size: 28px;
+      color: #ffcb05;
+      animation: pulse 1.5s infinite;
+    }
+
+    /* Stat Bars */
+    .stat-group { text-align: left; margin-top: 10px; font-size: 12px; }
+    .stat-label { display: flex; justify-content: space-between; margin-bottom: 3px; color: #cbd5e1; font-weight: 600; }
+    .bar-bg { background: #334155; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+    .bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease-out; }
+    .hp-fill { background: #22c55e; }
+    .atk-fill { background: #ef4444; }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.7); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+    }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h1>Should I Evolve This Pokémon?</h1>
-    <p>Select a Pokémon from the list:</p>
-    <select id="pokemonSelect"><option>Loading Pokémon data...</option></select>
+    <h1>Pokemon Evolver</h1>
+    <p class="subtitle">Should I evolve this Pokémon?</p>
     
+    <select id="pokemonSelect">
+      <option value="">Loading Pokémon data...</option>
+    </select>
+
     <div id="output"></div>
   </div>
 
@@ -33,21 +164,24 @@
       download: true,
       header: true,
       complete: function(results) {
-        pokemonData = results.data;
+        // Filter out empty rows
+        pokemonData = results.data.filter(p => p.pokemon && p.pokemon.trim() !== '');
         populateDropdown();
       }
     });
 
     function populateDropdown() {
       const select = document.getElementById('pokemonSelect');
-      select.innerHTML = '<option value="">-- Choose a Pokémon --</option>';
-      pokemonData.forEach(p => {
-        if (p.pokemon) {
-          const option = document.createElement('option');
-          option.value = p.species_id;
-          option.textContent = p.pokemon.charAt(0).toUpperCase() + p.pokemon.slice(1);
-          select.appendChild(option);
-        }
+      select.innerHTML = '<option value="">-- Choose a Pokémon (A-Z) --</option>';
+
+      // Sort Alphabetically
+      const sorted = [...pokemonData].sort((a, b) => a.pokemon.localeCompare(b.pokemon));
+
+      sorted.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p.species_id;
+        option.textContent = p.pokemon.charAt(0).toUpperCase() + p.pokemon.slice(1);
+        select.appendChild(option);
       });
     }
 
@@ -61,29 +195,45 @@
 
       if (evolution) {
         output.innerHTML = `
-          <div class="result yes">YES! You should evolve it.</div>
-          <div class="flex">
-            <div>
-              <p><strong>${selected.pokemon.toUpperCase()}</strong></p>
-              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selected.species_id}.png" alt="${selected.pokemon}">
-              <p>HP: ${selected.hp} | Atk: ${selected.attack}</p>
-            </div>
-            <div>➔</div>
-            <div>
-              <p><strong>${evolution.pokemon.toUpperCase()}</strong></p>
-              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${evolution.species_id}.png" alt="${evolution.pokemon}">
-              <p>HP: ${evolution.hp} | Atk: ${evolution.attack}</p>
-            </div>
+          <div class="result-badge yes">YES! EVOLVE IT ⚡</div>
+          <div class="flex-container">
+            ${createPokeCard(selected)}
+            <div class="arrow">➔</div>
+            ${createPokeCard(evolution)}
           </div>
         `;
       } else {
         output.innerHTML = `
-          <div class="result no">NO</div>
-          <p>This Pokémon cannot evolve further or has no evolution in this dataset.</p>
-          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${selected.species_id}.png" alt="${selected.pokemon}">
+          <div class="result-badge no">NO EVOLUTION AVAILABLE 🚫</div>
+          <p style="margin-bottom: 15px; color: #94a3b8; font-size: 13px;">This Pokémon is in its final stage or does not evolve.</p>
+          <div class="flex-container">
+            ${createPokeCard(selected, true)}
+          </div>
         `;
       }
     });
+
+    function createPokeCard(p, isSingle = false) {
+      const hpWidth = Math.min((parseInt(p.hp) / 150) * 100, 100);
+      const atkWidth = Math.min((parseInt(p.attack) / 150) * 100, 100);
+
+      return `
+        <div class="poke-box ${isSingle ? 'single' : ''}">
+          <p class="poke-name">${p.pokemon}</p>
+          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.species_id}.png" 
+               onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.species_id}.png'" 
+               alt="${p.pokemon}">
+          
+          <div class="stat-group">
+            <div class="stat-label"><span>HP</span><span>${p.hp}</span></div>
+            <div class="bar-bg"><div class="bar-fill hp-fill" style="width: ${hpWidth}%;"></div></div>
+            
+            <div class="stat-label"><span>Attack</span><span>${p.attack}</span></div>
+            <div class="bar-bg"><div class="bar-fill atk-fill" style="width: ${atkWidth}%;"></div></div>
+          </div>
+        </div>
+      `;
+    }
   </script>
 </body>
 </html>
